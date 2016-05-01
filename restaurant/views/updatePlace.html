@@ -1,0 +1,110 @@
+<html>
+  <head>
+   <style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    left:0;
+    top:0;
+	width:100%;
+	position: fixed;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
+li {
+    float: left;
+}
+
+li a, .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+    background-color: #111;
+}
+
+li.dropdown {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+</style>
+  </head>
+  <title>Update Place</title>
+  <body>    
+    <ul>
+			<li><a href="/">Home Page</a></li>
+			<li><a href="/create">Create Restaurant</a></li>
+			<li class="dropdown">
+        <a class="dropbtn" href="" style="background-color: #4CAF50">Update Restaurant</a>
+        <div class="dropdown-content">
+         <a href="/update">Update Name</a>
+         <a href="/updatePlace">Update Place</a>
+        </div>
+      </li>
+			<li><a href="/delete">Delete Restaurant</a></li>
+			<li><a href="/lists">List Restaurant</a></li>
+			<li><a href="/search">Search Restaurant</a></li>
+			<li><a href="/rate">Rate Restaurant</a></li>
+		</ul>
+    <div style="padding:20px;margin-top:30px">
+      <h1>Update Restaurant Place here!</h1>
+    <form method="post">
+      Restaurant ID:
+      <input type="text" class="text" name="rests_id" required>
+      <br/>
+      Borough:
+      <input type="text" class="text" name="borough" required>
+      <br/>
+	  <h2>Address:</h2>
+			Building:
+			<input type="text" name="building" required>
+			<br>Street:
+			<input type="text" name="street" required>
+			<br>Zipcode:
+			<input type="text" name="zipcode" required>
+			<br>
+			<h3>Coordinates:</h3>
+			Longitude:
+			<input type="text" name="lon" required>
+			<br>Latitude:
+			<input type="text" name="lat" required>
+			<br>
+      <input type="submit" value="Update" class="submitButton">
+    </form>
+    <br/>
+    <br/><a href="/">Back To Main Menu</a>
+    </div>
+  </body>
+
+</html>

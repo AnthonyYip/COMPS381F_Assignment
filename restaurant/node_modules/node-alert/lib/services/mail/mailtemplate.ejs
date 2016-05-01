@@ -1,0 +1,62 @@
+<html>
+<body>
+  Hey <%= addressed_to %>,<br/>
+  <%= serviceName %> 
+
+  <% if (instance) { %>
+    's <%= instance %> instance 
+  <% } %>
+  
+  has crashed due to an error
+  
+  <% if (origin) { %>
+  in <%= origin %>'s methods
+  <% } %>
+  
+  <br/>
+  <table>
+    <tr>
+      <td>
+        <strong>Crash time</strong>
+      </td>
+      <td>:</td>
+      <td>
+        <%= (new Date()).toUTCString() %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Error Message</strong>
+      </td>
+      <td>:</td>
+      <td>
+        <%= errormessage %>
+      </td>
+    </tr>
+  </table>
+  <% if (link && link_text) { %>
+    <br/> <a href="<%= link %>"> <%=link_text%> </a>  <br/><br/>
+  <% } %>
+
+  <div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+    <pre style="margin: 0; line-height: 125%">
+      <%= stacktrace %>
+    </pre>
+  </div>
+
+  <% if (link && link_text) { %>
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org"
+      "@type": "EmailMessage",
+      "action": {
+        "@type": "ViewAction",
+        "url": "<%= link %>",
+        "name": "<%= link_text %>"
+      },
+      "description": "<%= link_text %>"
+    }
+    </script>
+  <% } %>
+</body>
+</html>

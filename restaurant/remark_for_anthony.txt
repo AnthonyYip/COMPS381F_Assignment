@@ -1,0 +1,22 @@
+TODO List
+1. Update Err ---------------------------------------------DONE
+ - If there is nothing enter inside the inputfield
+ - Cannot Connect to database
+ - Cannot update into the database
+ - Check whether it is exist
+2. Create Err
+ - If there is nothing enter inside the inputfield
+ - Cannot Connect to database
+ - Cannot create into the database
+ - Check whether it is exist
+3. Delete Err ---------------------------------------------DONE
+ - If there is nothing enter inside the inputfield
+ - Cannot connect to database
+ - Cannot delete
+ - Check whether it is exist
+
+Additional
+1. Update and Delete function inside the List function
+Example Link: http://teknosains.com/i/simple-crud-nodejs-mysql
+2. Login Function
+	- Check it is normal user or restaurant owner
