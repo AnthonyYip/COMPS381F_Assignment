@@ -86,8 +86,12 @@ li.dropdown {
 			<a href="/update">Back To Update Page</a>
 			<% }else if(items=="Delete Not Success"||items=="Please Enter The Wanted Delete Restaurant ID!"){ %>
 			<a href="/delete">Back To Delete Page</a>
-			<% } %>
-			<br/>
+			<% } else if(items=="There is another restaurant using the same restaurants_id"){%>
+			<a href="/create">Back To Create Page</a>
+            <% } else if(items=="No Data Found"){%>
+            <a href="/search">Search Again</a>
+            <% }%>
+            <br/>
 			
 		</div>
 	</body>

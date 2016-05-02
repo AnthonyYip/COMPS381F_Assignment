@@ -51,7 +51,7 @@ function findAllResWithKey(req, res, db, selection) {
 		case 1:
 			db.collection('rests').find({ "name": new RegExp(req.params.keywords) }).toArray(function (err, result) {
 				if (err) {
-					res.status('400').send({ error: err });
+					res.render("err.ejs",{items:"No Data Found"});
 					console.log(err);
 
 				} else if (result.length) {
@@ -60,7 +60,7 @@ function findAllResWithKey(req, res, db, selection) {
 					res.render('search.ejs', { items: mk });
 				} else {
 					console.log('No document(s) found with defined "find" criteria!');
-					res.status('400').send({ error: 'No document(s) found' });
+					res.render("err.ejs",{items:"No Data Found"});
 				}
 			});
 			break;
@@ -68,14 +68,14 @@ function findAllResWithKey(req, res, db, selection) {
 			db.collection('rests').find({ "borough": new RegExp(req.params.keywords) }).toArray(function (err, result) {
 				if (err) {
 					console.log(err);
-					res.status('400').send({ error: err });
+					res.render("err.ejs",{items:"No Data Found"});
 				}
 				else if (result.length) {
 					mk = result;
 					res.render('search.ejs', { items: mk });
 				} else {
 					console.log('No document(s) found with defined "find" criteria!');
-					res.status('400').send({ error: 'No document(s) found' });
+					res.render("err.ejs",{items:"No Data Found"});
 				}
 			});
 			break;
@@ -83,14 +83,14 @@ function findAllResWithKey(req, res, db, selection) {
 			db.collection('rests').find({ "restaurant_id": new RegExp(req.params.keywords) }).toArray(function (err, result) {
 				if (err) {
 					console.log(err);
-					res.status('400').send({ error: err });
+					res.render("err.ejs",{items:"No Data Found"});
 				}
 				else if (result.length) {
 					mk = result;
 					res.render('search.ejs', { items: mk });
 				} else {
 					console.log('No document(s) found with defined "find" criteria!');
-					res.status('400').send({ error: 'No document(s) found' });
+					res.render("err.ejs",{items:"No Data Found"});
 				}
 			});
 			break;
@@ -99,31 +99,37 @@ function findAllResWithKey(req, res, db, selection) {
 
 //create restaurant function
 function createRestaurant(req, res) {
-	db.collection('rests').insertOne({
-		"address": {
-			"street": req.params.street,
-			"zipcode": req.params.zipcode,
-			"building": req.params.building,
-			"coord": [req.params.lon, req.params.lat]
-		},
-		"grades":[],
-		"borough": req.params.borough,
-		"cuisine": req.params.cuisine,
-		"name": req.params.name,
-		"restaurant_id": req.params.restaurant_id
+	db.collection('rests').count({ "restaurant_id": req.params.restaurant_id },function(err,result){
+		if(result==0){
+			db.collection('rests').insertOne({
+				"address": {
+					"street": req.params.street,
+					"zipcode": req.params.zipcode,
+					"building": req.params.building,
+					"coord": [req.params.lon, req.params.lat]
+				},
+				"grades":[],
+				"borough": req.params.borough,
+				"cuisine": req.params.cuisine,
+				"name": req.params.name,
+				"restaurant_id": req.params.restaurant_id
+			});
+			res.render("createR.ejs", { items: "Create Success" });
+		}else{
+			res.render("err.ejs",{items:"There is another restaurant using the same restaurants_id"});
+		}
 	});
-	res.render("createR.ejs", { items: "Create Success" });
 }
 
 //update restaurant function
 function updateRestaurant(req, res) {
-	db.collection('rests').count({ "restaurant_id": req.body.rests_id },function(err,result){
+	db.collection('rests').count({ "restaurant_id": req.params.rests_id },function(err,result){
 		
 		if(result!=0){
 			db.collection('rests').update({
-				restaurant_id: req.body.rests_id
+				restaurant_id: req.params.rests_id
 			}, {
-				$set: { name: req.body.name }
+				$set: { name: req.params.name }
 			}
 			);
 			res.render("updateR.ejs", { items: "Update Success" });
@@ -136,18 +142,18 @@ function updateRestaurant(req, res) {
 
 //update place function
 function updatePlace(req,res){
-		db.collection('rests').count({ "restaurant_id": req.body.rests_id },function(err,result){
+		db.collection('rests').count({ "restaurant_id": req.params.rests_id },function(err,result){
 		
 		if(result!=0){
 			db.collection('rests').update({
-				restaurant_id: req.body.rests_id
+				restaurant_id: req.params.rests_id
 			}, {
-				$set: { borough: req.body.borough,
+				$set: { borough: req.params.borough,
 					address:{
-						building:req.body.building,
-						coord:[req.body.lon,req.body.lat],
-						street:req.body.street,
-						zipcode:req.body.zipcode						
+						building:req.params.building,
+						coord:[req.params.lon,req.params.lat],
+						street:req.params.street,
+						zipcode:req.params.zipcode						
 					} }
 			}
 			);
@@ -160,9 +166,9 @@ function updatePlace(req,res){
 }
 //delete restaurant function
 function deleteRestaurant(req, res) {
-	db.collection('rests').count({ "restaurant_id": req.body.rests_id },function(err,result){
+	db.collection('rests').count({ "restaurant_id": req.params.rests_id },function(err,result){
 		if(result!=0){
-			db.collection('rests').remove({ "restaurant_id": req.body.newDocument }, function (err) {
+			db.collection('rests').remove({ "restaurant_id": req.params.rests_id }, function (err) {
 				if (err) {
 					console.log(err);
 					return;
@@ -191,12 +197,12 @@ function rateRestaurant(req, res) {
 	} 
 	today = dd+'/'+mm+'/'+yyyy;
 	//
-	db.collection('rests').count({"restaurant_id":req.body.rests_id}, function(err, result){
+	db.collection('rests').count({"restaurant_id":req.params.rests_id}, function(err, result){
 		if(result){
 			db.collection('rests').update({
-		restaurant_id: req.body.rests_id
+		restaurant_id: req.params.rests_id
 	   }, {
-			$push:{grades:{grade: req.body.rateGrade , score: req.body.rateScore , comment: req.body.commentDoc, date: today}}
+			$push:{grades:{grade: req.params.rateGrade , score: req.params.rateScore , comment: req.params.commentDoc, date: today}}
 		});
 				res.render("rate.ejs", { items: "Rate Success"});
 		}
@@ -273,11 +279,13 @@ app.get("/update", function (req, res) {
 });
 app.post("/update", function (req, res) {
 	if(req.body.rests_id!="" ||req.body.name!=""){
-		updateRestaurant(req, res);
-	}else{
+		res.redirect('/update/rests_id/' + req.body.rests_id + '/name/' + req.body.name); 
+		}else{
 		res.render("err.ejs",{items:"Please Enter Update Value!"});
-	}
-		
+	}		
+});
+app.get("/update/rests_id/:rests_id/name/:name",function(req,res){
+	updateRestaurant(req, res);
 });
 
 //update place
@@ -285,6 +293,9 @@ app.get("/updateplace", function (req, res) {
 	res.sendfile('./views/updatePlace.html');
 });
 app.post("/updateplace", function (req, res) {
+	res.redirect('/updateplace/rests_id/'+req.body.rests_id+'/borough/'+req.body.borough+'/building/'+req.body.building+'/street/'+req.body.street+'/zipcode/'+req.body.zipcode+'/lon/'+req.body.lon+'/lat/'+req.body.lat);
+});
+app.get("/updateplace/rests_id/:rests_id/borough/:borough/building/:building/street/:street/zipcode/:zipcode/lon/:lon/lat/:lat",function(req,res){
 	updatePlace(req,res,function(err){
 	if(err){
 		res.render("err.ejs",{items:"Please Enter Update Value!"});
@@ -297,10 +308,13 @@ app.get("/delete", function (req, res) {
 });
 app.post('/delete', function (req, res) {
 	if(req.body.newDocument!=""){
-		deleteRestaurant(req, res);
+		res.redirect('/delete/rests_id/'+req.body.newDocument);
 	}else{
 		res.render("err.ejs",{items:"Please Enter The Wanted Delete Restaurant ID!"});
 	}
+});
+app.get('/delete/rests_id/:rests_id',function(req,res){
+	deleteRestaurant(req, res);
 });
 
 //rate restaurant
@@ -308,7 +322,11 @@ app.get("/rate", function (req, res) {
 	res.sendfile('./views/rate.html');
 });
 
-app.post("/rate", function (req, res) {
+app.post("/rate", function (req, res) {	
+	res.redirect("/rate/rests_id/"+req.body.rests_id+"/rateGrade/"+req.body.rateGrade+"/rateScore/"+req.body.rateScore+"/commentDoc/"+req.body.commentDoc);
+});
+
+app.get("/rate/rests_id/:rests_id/rateGrade/:rateGrade/rateScore/:rateScore/commentDoc/:commentDoc",function(req,res){
 	rateRestaurant(req, res, function (err) {
 		if (err) {
 			res.render("rate.ejs", { items: "Rate Not Success" });
